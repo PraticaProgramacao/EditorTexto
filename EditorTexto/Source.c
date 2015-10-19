@@ -8,6 +8,8 @@
 #include "KeyboardController.h"
 #include "TAD.h"
 
+#define FALSE 0
+#define TRUE 1
 
 /*
 Cada linha do texto será representada pela struct 'Linha'
@@ -52,18 +54,29 @@ int main()
 	int ColunaAtual = 0, k; //indica a coluna atual que o cursor está repousando
 	char ch; //informa a letra que foi digitada pelo usuario
 	Linha * Texto = (Linha *)malloc(sizeof(Linha));
-
+	Keyboard keyboard;
 	//Inicia o editor de texto
 	while (1)
 	{
-		printf("Informe a posicao X do cursor:\n");
-		scanf("%i", &LinhaAtual);
-		printf("Informe a posicao Y do cursor:\n");
-		scanf("%i", &ColunaAtual);
+		keyboard = GetUserInput();
+		if (keyboard.Command == UP_ARROW)
+			printf("UP ARROW FOI PRESSIONADA\n");
+		else if (keyboard.Command == DOWN_ARROW)
+			printf("DOWN ARROW FOI PRESSIONADA\n");
+		else if (keyboard.Command == LEFT_ARROW)
+			printf("LEFT ARROW FOI PRESSIONADA\n");
+		else if (keyboard.Command == RIGHT_ARROW)
+			printf("RIGHT ARROW FOI PRESSIONADA\n");
+		else if (keyboard.Command == DELETE)
+			printf("DELETE FOI PRESSIONADA\n");
+		else if (keyboard.Command == BACKSPACE)
+			printf("BACKSPACE FOI PRESSIONADA\n");
+		else if (keyboard.Command == ENTER)
+			printf("ENTER FOI PRESSIONADO\n");
 
-		MoverCursor(LinhaAtual, ColunaAtual);
+		else
+			printf("%c FOI PRESSIONADO\n", keyboard.Key);
 
-		getchar();
 	}
 }
 
