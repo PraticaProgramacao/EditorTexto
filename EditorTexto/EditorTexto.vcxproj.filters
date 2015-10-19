@@ -18,5 +18,25 @@
     <ClCompile Include="Source.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileController.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyboardController.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TAD.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="KeyboardController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TAD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

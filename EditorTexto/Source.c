@@ -3,6 +3,12 @@
 #include <windows.h>
 #include <conio.h>
 
+//Bibliotecas Personalizadas
+#include "FileController.h"
+#include "KeyboardController.h"
+#include "TAD.h"
+
+
 /*
 Cada linha do texto será representada pela struct 'Linha'
 Cada caractere, pela struct 'Caractere'

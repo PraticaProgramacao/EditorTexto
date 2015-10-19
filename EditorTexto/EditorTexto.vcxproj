@@ -76,7 +76,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileController.c" />
+    <ClCompile Include="KeyboardController.c" />
     <ClCompile Include="Source.c" />
+    <ClCompile Include="TAD.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FileController.h" />
+    <ClInclude Include="KeyboardController.h" />
+    <ClInclude Include="TAD.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
