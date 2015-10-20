@@ -41,6 +41,11 @@ Keyboard GetUserInput() {
 			c.Command = BACKSPACE;
 		else if (ch1 == 13)
 			c.Command = ENTER;
+		else if (ch1 == 19)
+			c.Command = SAVE_FILE;
+		else if (ch1 == 1)
+			c.Command = OPEN_FILE;
+
 		else
 			c.Key = ch1;
 	}

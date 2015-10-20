@@ -12,8 +12,8 @@ Description: Controla os comandos de teclado (input)
 #define DOWN_ARROW 2 
 #define LEFT_ARROW 3
 #define RIGHT_ARROW 4
-#define SAVE_FILE 5
-#define OPEN_FILE 6
+#define SAVE_FILE 5 //CONTROL + S
+#define OPEN_FILE 6 //CONTROL + A
 #define BACKSPACE 7
 #define DELETE 8
 #define ENTER 9

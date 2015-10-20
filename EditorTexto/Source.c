@@ -46,37 +46,23 @@ typedef struct TLinha {
 //Função usada para setar o cursor no console
 void MoverCursor(int x, int y);
 
+//Opera
+void OperarKeyboardInput(Keyboard keyboard, int qtdLinha, int qndColunaAtual, int LinhaAtual, int ColunaAtual);
 
 
 int main()
 {
+	int qtdLinha = 0; //Indica a quantidade de linha
+	int qndColunaAtual = 0; //indica a quantidade total de caractere em que o cursor está repousando
 	int LinhaAtual = 0; //indica a linha atual que o cursor está repousando
-	int ColunaAtual = 0, k; //indica a coluna atual que o cursor está repousando
+	int ColunaAtual = 0; //indica a coluna atual que o cursor está repousando
 	char ch; //informa a letra que foi digitada pelo usuario
 	Linha * Texto = (Linha *)malloc(sizeof(Linha));
 	Keyboard keyboard;
 	//Inicia o editor de texto
 	while (1)
 	{
-		keyboard = GetUserInput();
-		if (keyboard.Command == UP_ARROW)
-			printf("UP ARROW FOI PRESSIONADA\n");
-		else if (keyboard.Command == DOWN_ARROW)
-			printf("DOWN ARROW FOI PRESSIONADA\n");
-		else if (keyboard.Command == LEFT_ARROW)
-			printf("LEFT ARROW FOI PRESSIONADA\n");
-		else if (keyboard.Command == RIGHT_ARROW)
-			printf("RIGHT ARROW FOI PRESSIONADA\n");
-		else if (keyboard.Command == DELETE)
-			printf("DELETE FOI PRESSIONADA\n");
-		else if (keyboard.Command == BACKSPACE)
-			printf("BACKSPACE FOI PRESSIONADA\n");
-		else if (keyboard.Command == ENTER)
-			printf("ENTER FOI PRESSIONADO\n");
-
-		else
-			printf("%c FOI PRESSIONADO\n", keyboard.Key);
-
+		OperarKeyboardInput(GetUserInput(), qtdLinha, qndColunaAtual, LinhaAtual, ColunaAtual);
 	}
 }
 
@@ -87,4 +73,27 @@ int y - Indica a posição do ponteiro no eixo Y
 */
 void MoverCursor(int x, int y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), (COORD) { x - 1, y - 1 });
+}
+
+void OperarKeyboardInput(Keyboard keyboard, int qtdLinha, int qndColunaAtual, int LinhaAtual, int ColunaAtual) {
+	if (keyboard.Command == UP_ARROW) 
+		printf("\nUP ARROW FOI PRESSIONADA\n");
+	else if (keyboard.Command == DOWN_ARROW)
+		printf("\nDOWN ARROW FOI PRESSIONADA\n");
+	else if (keyboard.Command == LEFT_ARROW)
+		printf("\nLEFT ARROW FOI PRESSIONADA\n");
+	else if (keyboard.Command == RIGHT_ARROW)
+		printf("\nRIGHT ARROW FOI PRESSIONADA\n");
+	else if (keyboard.Command == DELETE)
+		printf("\nDELETE FOI PRESSIONADA\n");
+	else if (keyboard.Command == BACKSPACE)
+		printf("\nBACKSPACE FOI PRESSIONADA\n");
+	else if (keyboard.Command == ENTER)
+		printf("\nENTER FOI PRESSIONADO\n");
+	else if (keyboard.Command == SAVE_FILE)
+		printf("\nSALVANDO ARQUIVO...\n");
+	else if (keyboard.Command == OPEN_FILE)
+		printf("\nABRINDO ARQUIVO...\n");
+	else
+		printf("%c", keyboard.Key);
 }
