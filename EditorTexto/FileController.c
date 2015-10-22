@@ -5,10 +5,11 @@ Cabeçalho das funções com seus respectivos comentarios.
 
 #include <stdio.h>
 
+
 FILE Criar (char nome[]) {
 FILE *arq;
 
-arq = fopen(nome,"wt");
+arq = fopen(nome,"w");
 
    if (arq == NULL)
    {
@@ -20,7 +21,6 @@ arq = fopen(nome,"wt");
     return *arq;
 	 }
 }
-
 void Fechar (FILE *arq)
 {
 int status;
@@ -31,9 +31,7 @@ status = fclose(arq);
  else
 	 printf("Erro no fechamento do arquivo.\n");
 }
-
-
-void Gravar (FILE *arq,char conteudo[])
+void GravarString (FILE *arq,char conteudo[])
 {
 int status;
 status=fputs(conteudo,arq);
@@ -43,5 +41,52 @@ status=fputs(conteudo,arq);
 	 printf("Conteudo gravado com sucesso.\n");
 }
  
+void AbrirGravar (char nome[])
+{
+FILE *arq;
+int status;
+
+arq =fopen(nome,"a");
+
+if( arq == NULL)
+ printf("Erro ao abrir o arquivo.\n");
+else 
+	printf("Arquivo aberto com sucesso.\n");
+}
 
 
+void AbrirLer (char nome[])
+{
+FILE *arq;
+int status;
+
+arq = fopen(nome,"r");
+
+if (arq == NULL)
+	printf("Erro ao abrir o arquivo.\n");
+else
+	printf("Arquivo aberto com sucesso.\n");
+}
+
+void GravarCaracter (FILE *arq ,char c)
+{
+int status;
+
+status = fputc(c,arq);
+
+if ( status == EOF)
+	printf("Erro na gravacao.\n");
+else
+	printf("Caracter gravado com sucesso.\n");
+}
+
+void Remover (char nome[])
+{
+int status;
+
+ status = remove(nome);
+ if (status == 0)
+	 printf("Arquvo excluido com sucesso.\n");
+ else
+	 printf("Erro ao excluir o arquivo.\n");
+}
