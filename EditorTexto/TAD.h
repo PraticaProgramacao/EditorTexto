@@ -14,3 +14,4 @@ typedef struct TLinha {
 
 void InserirNovaLinha(Linha * texto, int * posLinha, int * qntLinha);
 void QuebrarLinha(Linha * texto, int * posLinha, int * qntLinha);
+void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual);

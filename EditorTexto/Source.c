@@ -30,24 +30,33 @@ Segundo a lógica, temos as structs abaixo
 
 //Função usada para setar o cursor no console
 void MoverCursor(int x, int y);
-
+void ImprimirTexto(Linha * Texto);
 //Opera
-void OperarKeyboardInput(Keyboard keyboard, int qtdLinha, int qndColunaAtual, int LinhaAtual, int ColunaAtual);
+void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual);
+
+
+
+void EventCharKey(char letra, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual);
 
 
 int main()
 {
-	int qtdLinha = 0; //Indica a quantidade de linha
-	int qndColunaAtual = 0; //indica a quantidade total de caractere em que o cursor está repousando
 	int LinhaAtual = 0; //indica a linha atual que o cursor está repousando
 	int ColunaAtual = 0; //indica a coluna atual que o cursor está repousando
-	char ch; //informa a letra que foi digitada pelo usuario
+	
+	//Configuração inicial do texto
 	Linha * Texto = (Linha *)malloc(sizeof(Linha));
+	Texto->Anterior = NULL;
+	Texto->Inicio = NULL;
+	Texto->Proxima = NULL;
+	Caractere * caractereAtual = Texto->Inicio;
+	Linha * linhaAtual = Texto;
+
 	Keyboard keyboard;
 	//Inicia o editor de texto
 	while (1)
 	{
-		OperarKeyboardInput(GetUserInput(), qtdLinha, qndColunaAtual, LinhaAtual, ColunaAtual);
+		OperarKeyboardInput(GetUserInput(), &LinhaAtual, &ColunaAtual, &Texto, &caractereAtual, &linhaAtual);
 	}
 }
 
@@ -60,8 +69,9 @@ void MoverCursor(int x, int y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), (COORD) { x - 1, y - 1 });
 }
 
-void OperarKeyboardInput(Keyboard keyboard, int qtdLinha, int qndColunaAtual, int LinhaAtual, int ColunaAtual) {
-	if (keyboard.Command == UP_ARROW) 
+void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual) {
+	
+	if (keyboard.Command == UP_ARROW)
 		printf("\nUP ARROW FOI PRESSIONADA\n");
 	else if (keyboard.Command == DOWN_ARROW)
 		printf("\nDOWN ARROW FOI PRESSIONADA\n");
@@ -80,5 +90,29 @@ void OperarKeyboardInput(Keyboard keyboard, int qtdLinha, int qndColunaAtual, in
 	else if (keyboard.Command == OPEN_FILE)
 		printf("\nABRINDO ARQUIVO...\n");
 	else
-		printf("%c", keyboard.Key);
+		EventCharKey(keyboard.Key, LinhaAtual, ColunaAtual, Texto, atual, linhaAtual);
+}
+
+void EventCharKey(char letra, int * LinhaAtual, int * ColunaAtual, Linha ** Texto, Caractere ** atual, Linha ** linhaAtual) {
+	InserirCaractere(letra, atual, linhaAtual);
+	*ColunaAtual++;
+	ImprimirTexto((Texto));
+	MoverCursor(ColunaAtual, LinhaAtual);
+}
+
+void ImprimirTexto(Linha ** Texto) {
+	
+	Linha * lAux = (*Texto);
+	Caractere * cAux = NULL;
+	system("cls");
+	while (lAux != NULL)
+	{
+		cAux = lAux->Inicio;
+		while (cAux != NULL)
+		{
+			printf("%c", cAux->Letra);
+			cAux = cAux->Proxima;
+		}
+		lAux = lAux->Proxima;
+	}
 }
