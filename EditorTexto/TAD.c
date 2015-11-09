@@ -1,22 +1,73 @@
 #include "TAD.h"
 #include <stdio.h>
-
+#include <stdlib.h>
 
 //Not implemented fully (yet)
-void InserirNovaLinha(Linha * texto, int * posLinha, int * qntLinha) {
+void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, int * posColuna) {
+	Linha * novaLinha = (Linha *)malloc(sizeof(Linha));
+	Caractere * QuebraLinha = (Caractere *)malloc(sizeof(Caractere));
+
+	//Definição da nova linha
+	novaLinha->Inicio = NULL;
+	novaLinha->Anterior = NULL;
+	novaLinha->Proxima = NULL;
+
+	//A primeira linha obrigatoriamente terá um \n, pois é uma quebra de linha no final das contas
+	QuebraLinha->Letra = '\n';
+	QuebraLinha->Anterior = NULL;
+	QuebraLinha->Proxima = NULL;
+	
+	//Se for no início da linha
+	if ((*atual) == NULL)
+	{
+		//Se for na primeira linha
+		if ((*linhaAtual)->Anterior == NULL)
+			*Texto = novaLinha;
+
+		novaLinha->Inicio = QuebraLinha;
+		novaLinha->Anterior = (*linhaAtual)->Anterior;
+		novaLinha->Proxima  = (*linhaAtual);
+		if((*linhaAtual)->Anterior != NULL)
+			(*linhaAtual)->Anterior->Proxima = novaLinha;
+		(*linhaAtual)->Anterior = novaLinha;
+
+	}
+	else 
+	{
+		//Definições da quebra de linha
+		QuebraLinha->Anterior = (*atual);
+		QuebraLinha->Proxima = NULL;
+		
+		novaLinha->Inicio = (*atual)->Proxima;
+		if (novaLinha->Inicio != NULL)
+			novaLinha->Inicio->Anterior = NULL;
+
+		(*atual)->Proxima = QuebraLinha;
+
+		novaLinha->Anterior = (*linhaAtual);
+		novaLinha->Proxima = (*linhaAtual)->Proxima;
+		
+		if((*linhaAtual)->Proxima != NULL)
+			(*linhaAtual)->Proxima->Anterior = novaLinha;
+		
+		(*linhaAtual)->Proxima = novaLinha;
+		(*atual) = NULL;
+		
+		(*linhaAtual) = novaLinha;
+	}
+}
+
+int CountCaracteresLine(Linha ** linhaAtual) {
 	int i = 0;
-	Linha * novaLinha;
-	//Percorre até a posição do ponteiro
-	for (texto; i < posLinha; texto = texto->Proxima, i++);
-
-	//Aloca a nova linha
-	novaLinha = (Linha *)malloc(sizeof(Linha));
-
-	//Coloca a nova linha no local correto
-	novaLinha->Proxima = texto->Proxima;
-	texto->Proxima = novaLinha;
-	novaLinha->Anterior = texto;
-
+	Caractere * aux = (*linhaAtual)->Inicio;
+	while (aux->Proxima != NULL)
+	{
+		aux = aux->Proxima;
+		i++;
+	}
+	if ((*linhaAtual)->Proxima == NULL)
+		i++;
+	return i;
 }
 
 void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual){
@@ -25,28 +76,79 @@ void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual){
 	novo->Proxima = NULL;
 	novo->Anterior = NULL;
 
-
+	//Inserção no inicio
 	if ((*atual) == NULL)
 	{
 		*atual = novo;
-		(*linhaAtual)->Inicio = (*atual);
-	}
-	else
-	{
-		if ((*atual)->Anterior == NULL && (*atual)->Proxima != NULL) {
-			novo->Proxima = atual;
-			(*atual) = novo;
+		if ((*linhaAtual)->Inicio == NULL) 
+			(*linhaAtual)->Inicio = (*atual);
+		else 
+		{
+			novo->Proxima = (*linhaAtual)->Inicio;
+			(*linhaAtual)->Inicio->Anterior = novo;
+			(*linhaAtual)->Inicio = novo;
 		}
-		else if ((*atual)->Proxima == NULL) {
+	}
+	else 
+	{
+		//Inserção no fim
+		if ((*atual)->Proxima == NULL) {
 			(*atual)->Proxima = novo;
+			novo->Anterior = (*atual);
 			(*atual) = novo;
 		}
 		else
 		{
+			//Inserção no meio
 			novo->Anterior = (*atual);
 			novo->Proxima = (*atual)->Proxima;
+
+			(*atual)->Proxima->Anterior = novo;
+			(*atual)->Proxima = novo;
+
 			(*atual) = novo;
 		}
 	}
-	
+}
+
+int DeletarCaractere(Linha ** linhaAtual, Caractere ** caractereAtual, Caractere ** caractereRemover) {
+	Caractere * aux = (*caractereRemover);
+
+	//Backspace
+	if ((*caractereAtual) == (*caractereRemover)) 
+	{
+		if (aux == NULL) {
+			if ((*linhaAtual)->Anterior == NULL)
+				return;
+			else
+			{
+				(*linhaAtual) = (*linhaAtual)->Anterior;
+			}
+		}
+		else if ((*caractereRemover)->Letra != '\n') 
+		{
+			(*caractereAtual) = (*caractereAtual)->Anterior;
+			(*caractereAtual)->Proxima = aux->Proxima;
+			if (aux->Proxima != NULL)
+				aux->Proxima->Anterior = (*caractereAtual);
+			free(aux);
+		}
+
+	}
+	//Delete
+	else
+	{
+		if (aux == NULL) {
+			return;
+		}
+
+		else if ((*caractereRemover)->Letra != '\n') 
+		{
+			(*caractereAtual)->Proxima = aux->Proxima;
+			if (aux->Proxima != NULL)
+				aux->Proxima->Anterior = (*caractereAtual);
+
+			free(aux);
+		}
+	}
 }

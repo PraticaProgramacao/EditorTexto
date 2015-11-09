@@ -8,15 +8,15 @@ Description: Controla os comandos de teclado (input)
 #define TRUE 1
 
 //Definição dos codigos de comando
-#define UP_ARROW 1
-#define DOWN_ARROW 2 
-#define LEFT_ARROW 3
-#define RIGHT_ARROW 4
-#define SAVE_FILE 5 //CONTROL + S
-#define OPEN_FILE 6 //CONTROL + A
-#define BACKSPACE 7
-#define DELETE 8
-#define ENTER 9
+#define UP_ARROW			1
+#define DOWN_ARROW			2 
+#define LEFT_ARROW			3
+#define RIGHT_ARROW			4
+#define SAVE_FILE			5 //CONTROL + S
+#define OPEN_FILE			6 //CONTROL + A
+#define BACKSPACE			7
+#define DELETE				8
+#define ENTER				9
 typedef struct TKeyboard {
 	char Key;
 	int Command; //Indica o comando que foi dado pelo usuário, caso seja 0, indica uma letra
