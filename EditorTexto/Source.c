@@ -6,7 +6,6 @@
 //Bibliotecas Personalizadas
 #include "FileController.h"
 #include "KeyboardController.h"
-#include "TAD.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -212,7 +211,7 @@ void EventDownArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 		(*linhaAtual) = (*linhaAtual)->Proxima;
 		if ((*ColunaAtual) > countLinhaDestino) {
 			//Vai pro fim
-			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino - 1; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
 			
 			(*ColunaAtual) = countLinhaDestino;
 		}
@@ -276,26 +275,32 @@ void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual) {
 void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
 	char letra;
 	system("cls");
-	while ((*arq) == NULL) {
+	while ((*arq) == NULL)
+	{
 		printf("Informe o diretorio e o nome do arquivo:\n>>");
 		gets(fileDir); fflush(stdin);
 		(*arq) = Abrir(fileDir);
 	}
+
+	DestruirTexto(Texto, linhaAtual, caractereAtual, LinhaAtual, ColunaAtual);
+
+
 	fseek((*arq), 0, 0);
-	while (!feof(*arq))
+	do 
 	{
-		fread(&letra, sizeof(char), 1, (*arq));
-		if (letra == '\n') {
-			InserirNovaLinha(Texto, linhaAtual, caractereAtual, ColunaAtual);
-			(*LinhaAtual)++;
-			(*ColunaAtual) = 0;
+		if (fread(&letra, sizeof(char), 1, (*arq)) == 1) {
+			if (letra == '\n') {
+				InserirNovaLinha(Texto, linhaAtual, caractereAtual, ColunaAtual);
+				(*LinhaAtual)++;
+				(*ColunaAtual) = 0;
+			}
+			else
+			{
+				InserirCaractere(letra, caractereAtual, linhaAtual);
+				(*ColunaAtual)++;
+			}
 		}
-		else
-		{ 
-			InserirCaractere(letra, caractereAtual, linhaAtual); 
-			(*ColunaAtual)++;
-		}
-	}
+	} while ((!feof(*arq)));
 }
 
 void EventSaveFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
@@ -303,6 +308,6 @@ void EventSaveFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linh
 		printf("Informe o nome do arquivo:\n>>");
 		gets(fileDir); fflush(stdin);
 	}
-	Remover(fileDir);
 	Salvar(Texto, fileDir);
+
 }

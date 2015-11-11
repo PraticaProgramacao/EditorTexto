@@ -1,7 +1,4 @@
 #include "KeyboardController.h"
-#include <ctype.h>
-
-#define SCROLL 0xE0
 
 Keyboard GetUserInput() {
 	

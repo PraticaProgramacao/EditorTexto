@@ -6,7 +6,7 @@ Cabeçalho das funções com seus respectivos comentarios.
 
 FILE * Criar (char nome[]) {
 	FILE *arq;
-	arq = fopen(nome, "a+");
+	arq = fopen(nome, "w+");
 
 	if (arq == NULL)
 		printf("Erro ao criar o arquivo.\n");
@@ -38,16 +38,6 @@ FILE * Abrir (char nome[])
 }
 
 
-void Remover (char nome[])
-{
-	int status;
-
-	status = remove(nome);
-	if (status == 0)
-		printf("Arquvo excluido com sucesso.\n");
-	else
-		printf("Erro ao excluir o arquivo.\n");
-}
 
 void Salvar(Linha ** Texto, char fileDir[200]) {
 	FILE * arq = Criar(fileDir);
@@ -58,9 +48,11 @@ void Salvar(Linha ** Texto, char fileDir[200]) {
 		cAux = lAux->Inicio;
 		while (cAux != NULL)
 		{
-			fputc(cAux->Letra, arq);
+			if (fputc(cAux->Letra, arq) == cAux->Letra)
+				printf("char adicionado com sucesso!");
 			cAux = cAux->Proxima;
 		}
 		lAux = lAux->Proxima;
 	}
+	fclose(arq);
 }

@@ -157,3 +157,30 @@ int DeletarCaractere(Linha ** linhaAtual, Caractere ** caractereAtual, Caractere
 		}
 	}
 }
+
+void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual){
+	Linha * lAux = (*Texto), *lAuxProx;
+	Caractere * cAux, *cAuxProx;
+
+	while (lAux != NULL)
+	{
+		lAuxProx = lAux->Proxima;
+		cAux = lAux->Inicio;
+		while (cAux!=NULL)
+		{
+			cAuxProx = cAux->Proxima;
+			free(cAux);
+			cAux = cAuxProx;
+		}
+		free(lAux);
+		lAux = lAuxProx;
+	}
+	(*Texto) = (Linha *)malloc(sizeof(Linha));
+	(*Texto)->Anterior = NULL;
+	(*Texto)->Proxima = NULL;
+	(*Texto)->Inicio = NULL;
+	(*linhaAtual) = (*Texto);
+	(*caracterAtual) = NULL;
+	(*LinhaAtual) = 0;
+	(*ColunaAtual) = 0;
+}

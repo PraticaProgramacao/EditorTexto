@@ -2,12 +2,15 @@
 Author: Lucas Simas
 Description: Controla os comandos de teclado (input)
 */
+#include <ctype.h>
+#include <conio.h>
 
 //Definição das 'booleans'
 #define FALSE 0
 #define TRUE 1
 
 //Definição dos codigos de comando
+#define SCROLL				0xE0
 #define UP_ARROW			1
 #define DOWN_ARROW			2 
 #define LEFT_ARROW			3

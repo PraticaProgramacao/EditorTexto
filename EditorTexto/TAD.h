@@ -19,3 +19,4 @@ void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, i
 void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual);
 int CountCaracteresLine(Linha ** linhaAtual);
 int DeletarCaractere(Linha ** linhaAtual, Caractere ** caractereAtual, Caractere ** caractereRemover);
+void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual);
