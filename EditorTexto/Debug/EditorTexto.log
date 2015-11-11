@@ -1,51 +1,9 @@
-﻿Build started 11/11/2015 12:03:33 AM.
-     1>Project "C:\Users\Lucas\Documents\GitHub\EditorTexto\EditorTexto\EditorTexto.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:prompt Source.c
-         Source.c
-     1>c:\users\lucas\documents\github\editortexto\editortexto\keyboardcontroller.h(21): warning C4005: 'DELETE': macro redefinition
-         c:\program files (x86)\windows kits\8.1\include\um\winnt.h(9107): note: see previous definition of 'DELETE'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(78): warning C4047: 'function': 'Linha *' differs in levels of indirection from 'Linha **'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(78): warning C4024: 'ImprimirTexto': different types for formal and actual parameter 1
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(80): warning C4047: 'function': 'Linha *' differs in levels of indirection from 'Linha **'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(80): warning C4024: 'OperarKeyboardInput': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(74): warning C4101: 'keyboard': unreferenced local variable
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(102): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(102): warning C4024: 'EventUpArrow': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(104): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(104): warning C4024: 'EventDownArrow': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(106): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(106): warning C4024: 'EventLeftArrow': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(108): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(108): warning C4024: 'EventRightArrow': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(110): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(110): warning C4024: 'EventDelete': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(112): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(112): warning C4024: 'EventBackspace': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(114): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(114): warning C4024: 'EventEnter': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(116): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(116): warning C4024: 'EventSaveFile': different types for formal and actual parameter 3
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(118): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'Linha *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(118): warning C4024: 'EventOpenFile': different types for formal and actual parameter 3
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(119): warning C4047: '!=': 'int' differs in levels of indirection from 'void *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(229): warning C4047: 'function': 'int *' differs in levels of indirection from 'int'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(229): warning C4024: 'InserirNovaLinha': different types for formal and actual parameter 4
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(235): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'int *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(235): warning C4024: 'DeletarCaractere': different types for formal and actual parameter 1
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(239): warning C4047: 'function': 'Linha **' differs in levels of indirection from 'int *'
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(239): warning C4024: 'DeletarCaractere': different types for formal and actual parameter 1
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(243): warning C4028: formal parameter 4 different from declaration
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(247): warning C4028: formal parameter 1 different from declaration
-     1>c:\users\lucas\documents\github\editortexto\editortexto\source.c(281): warning C4013: 'gets' undefined; assuming extern returning int
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Lucas\Documents\GitHub\EditorTexto\Debug\EditorTexto.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Lucas\Documents\GitHub\EditorTexto\Debug\EditorTexto.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Lucas\Documents\GitHub\EditorTexto\Debug\EditorTexto.lib" /MACHINE:X86 Debug\FileController.obj
-         Debug\KeyboardController.obj
-         Debug\Source.obj
-         Debug\TAD.obj
-         EditorTexto.vcxproj -> C:\Users\Lucas\Documents\GitHub\EditorTexto\Debug\EditorTexto.exe
-     1>Done Building Project "C:\Users\Lucas\Documents\GitHub\EditorTexto\EditorTexto\EditorTexto.vcxproj" (Build target(s)).
+﻿Build started 11/11/2015 00:20:26.
+     1>Project "F:\FACULDADE\EditorTexto\EditorTexto\EditorTexto.vcxproj" on node 2 (Build target(s)).
+       Project file contains ToolsVersion="14.0". This toolset may be unknown or missing, in which case you may be able to resolve this by installing the appropriate version of MSBuild, or the build may have been forced to a particular ToolsVersion for policy reasons. Treating the project as if it had ToolsVersion="4.0". For more information, please see http://go.microsoft.com/fwlink/?LinkId=291333.
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.Cpp.Platform.targets(44,5): error MSB8020: The builds tools for v140 (Platform Toolset = 'v140') cannot be found. To build using the v140 build tools, either click the Project menu or right-click the solution, and then select "Update VC++ Projects...". Install v140 to build using the v140 build tools.
+     1>Done Building Project "F:\FACULDADE\EditorTexto\EditorTexto\EditorTexto.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:00.98
+Time Elapsed 00:00:00.00

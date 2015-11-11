@@ -77,7 +77,7 @@ int main()
 	{
 		ImprimirTexto(&Texto, &caractereAtual, &linhaAtual);
 		MoverCursor(ColunaAtual, LinhaAtual);
-		OperarKeyboardInput(GetUserInput(), &LinhaAtual, &ColunaAtual, &Texto, &caractereAtual, &linhaAtual, &arquivo, fileDir);
+		OperarKeyboardInput(GetUserInput(), &LinhaAtual, &ColunaAtual, Texto, &caractereAtual, &linhaAtual, &arquivo, fileDir);
 	}
 }
 
@@ -96,7 +96,7 @@ void MoverCursor(int x, int y) {
 		printf("Erro ao mover o cursor!");
 }
 
-void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual, FILE ** arq, char fileDir[]) {
+void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha ** Texto, Caractere ** atual, Linha ** linhaAtual, FILE ** arq, char fileDir[]) {
 	
 	if (keyboard.Command == UP_ARROW)
 		EventUpArrow(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
@@ -226,17 +226,17 @@ void EventDownArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 }
 
 void EventEnter(int * LinhaAtual, int * ColunaAtual, Caractere ** atual, Linha ** Texto, Linha ** linhaAtual) {
-	InserirNovaLinha(Texto, linhaAtual, atual, (*ColunaAtual));
+	InserirNovaLinha(Texto, linhaAtual, atual, ColunaAtual);
 	(*LinhaAtual)++;
 	(*ColunaAtual) = 0;
 }
 
 void EventBackspace(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
-	DeletarCaractere(LinhaAtual, caracterAtual, caracterAtual);
+	DeletarCaractere(linhaAtual, caracterAtual, caracterAtual);
 	(*ColunaAtual)--;
 }
 void EventDelete(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
-	DeletarCaractere(LinhaAtual, caracterAtual, &(*caracterAtual)->Proxima);
+	DeletarCaractere(linhaAtual, caracterAtual, &(*caracterAtual)->Proxima);
 }
 
 
