@@ -1,4 +1,5 @@
 #include "KeyboardController.h"
+#include <ctype.h>
 
 #define SCROLL 0xE0
 
@@ -31,7 +32,7 @@ Keyboard GetUserInput() {
 			c.Command = DELETE;
 			break;
 		default:
-			c.Command = 0;
+			c.Command = NULL;
 			break;
 		}
 	}
@@ -45,9 +46,9 @@ Keyboard GetUserInput() {
 			c.Command = SAVE_FILE;
 		else if (ch1 == 1)
 			c.Command = OPEN_FILE;
-
 		else
 			c.Key = ch1;
+
 	}
 	return c;
 }

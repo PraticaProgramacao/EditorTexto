@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//Not implemented fully (yet)
 void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, int * posColuna) {
 	Linha * novaLinha = (Linha *)malloc(sizeof(Linha));
 	Caractere * QuebraLinha = (Caractere *)malloc(sizeof(Caractere));
@@ -58,15 +57,21 @@ void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, i
 }
 
 int CountCaracteresLine(Linha ** linhaAtual) {
+	/* Inicialmente todas as linhas tem 0 caracteres, então: */
 	int i = 0;
 	Caractere * aux = (*linhaAtual)->Inicio;
-	while (aux->Proxima != NULL)
+	
+	/*  */
+	if (aux != NULL) 
 	{
-		aux = aux->Proxima;
-		i++;
+
+		while (aux != NULL)
+		{
+			if(aux->Letra != '\n')
+				i++;
+			aux = aux->Proxima;
+		}
 	}
-	if ((*linhaAtual)->Proxima == NULL)
-		i++;
 	return i;
 }
 

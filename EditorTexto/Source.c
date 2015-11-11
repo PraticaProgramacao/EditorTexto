@@ -11,6 +11,14 @@
 #define FALSE 0
 #define TRUE 1
 
+#define DARKBLUE 9
+#define LIGHTGREEN 10
+#define LIGHTBLUE 11
+#define RED 12
+#define PINK 13
+#define YELLOW 14
+#define WHITE 15
+
 /*
 Cada linha do texto será representada pela struct 'Linha'
 Cada caractere, pela struct 'Caractere'
@@ -30,10 +38,10 @@ Segundo a lógica, temos as structs abaixo
 
 //Funções primordiais do editor:
 void MoverCursor(int x, int y);
-void ImprimirTexto(Linha * Texto, Caractere ** Atual);
+void ImprimirTexto(Linha * Texto, Caractere ** Atual, Linha ** linhaAtual);
 
 //Operação de teclados
-void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual);
+void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual, FILE ** arq, char fileDir[]);
 
 //Eventos de tecla
 
@@ -45,6 +53,8 @@ void EventUpArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtua
 void EventDownArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual);
 void EventBackspace(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual);
 void EventDelete(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual);
+void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual);
+void EventSaveFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual);
 
 
 int main()
@@ -52,6 +62,8 @@ int main()
 	int LinhaAtual = 0; //indica a linha atual que o cursor está repousando
 	int ColunaAtual = 0; //indica a coluna atual que o cursor está repousando
 	
+	FILE * arquivo = NULL;
+	char fileDir[200] = "";
 	//Configuração inicial do texto
 	Linha * Texto = (Linha *)malloc(sizeof(Linha));
 	Texto->Anterior = NULL;
@@ -64,9 +76,9 @@ int main()
 	//Inicia o editor de texto
 	while (1)
 	{
-		ImprimirTexto(&Texto, &caractereAtual);
+		ImprimirTexto(&Texto, &caractereAtual, &linhaAtual);
 		MoverCursor(ColunaAtual, LinhaAtual);
-		OperarKeyboardInput(GetUserInput(), &LinhaAtual, &ColunaAtual, &Texto, &caractereAtual, &linhaAtual);
+		OperarKeyboardInput(GetUserInput(), &LinhaAtual, &ColunaAtual, &Texto, &caractereAtual, &linhaAtual, &arquivo, fileDir);
 	}
 }
 
@@ -78,14 +90,14 @@ UPDATE: Alerta erro ao mover o cursor
 */
 void MoverCursor(int x, int y) {
 	COORD coord;
-	coord.X = x;
+	coord.X = x + 6;
 	coord.Y = y;
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (!SetConsoleCursorPosition(hConsole, coord))
 		printf("Erro ao mover o cursor!");
 }
 
-void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual) {
+void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual, FILE ** arq, char fileDir[]) {
 	
 	if (keyboard.Command == UP_ARROW)
 		EventUpArrow(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
@@ -102,39 +114,46 @@ void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual,
 	else if (keyboard.Command == ENTER)
 		EventEnter(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
 	else if (keyboard.Command == SAVE_FILE)
-		printf("\nSALVANDO ARQUIVO...\n");
+		EventSaveFile(arq, fileDir, Texto, linhaAtual, atual, ColunaAtual, LinhaAtual);
 	else if (keyboard.Command == OPEN_FILE)
-		printf("\nABRINDO ARQUIVO...\n");
-	else
+		EventOpenFile(arq, fileDir, Texto, linhaAtual, atual, ColunaAtual, LinhaAtual);
+	else if(keyboard.Key != NULL)
 		EventCharKey(keyboard.Key, LinhaAtual, ColunaAtual, Texto, atual, linhaAtual);
 }
 
 
-
+/* Evento é chamado quando a tecla pra o lado esquerdo é pressionada */
 void EventLeftArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual){
 	int i = 0;
 	if ((*ColunaAtual) > 0) 
 	{
 		(*ColunaAtual)--;
- 		ImprimirTexto(Texto, caracterAtual);
 		(*caracterAtual) = (*caracterAtual)->Anterior;
 	}
 	else 
 	{
-		if ((*linhaAtual)->Anterior != NULL) {
+		if ((*linhaAtual)->Anterior != NULL)
+		{
 			(*LinhaAtual)--;
 			(*linhaAtual) = (*linhaAtual)->Anterior;
 			*ColunaAtual = CountCaracteresLine(linhaAtual);
-			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual - 1); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+			
+			if ((*caracterAtual) != NULL)
+			{
+				if ((*caracterAtual)->Letra == '\n')
+					(*caracterAtual) = (*caracterAtual)->Anterior;
+			}
 		}
 	}
 }
 
+/**/
 void EventRightArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
-	if ((*ColunaAtual) < CountCaracteresLine(linhaAtual))
+	int qntCaracteres = CountCaracteresLine(linhaAtual);
+	if ((*ColunaAtual) < qntCaracteres)
 	{
 		(*ColunaAtual)++;
-		ImprimirTexto(Texto, caracterAtual);
 		if ((*caracterAtual) != NULL)
 			(*caracterAtual) = (*caracterAtual)->Proxima;
 		else
@@ -156,6 +175,12 @@ void EventUpArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtua
 	int countLinhaDestino, i = 0;
 	if ((*LinhaAtual) <= 0)
 		return;
+	else if ((*caracterAtual) == NULL) {
+		(*LinhaAtual)--;
+		(*linhaAtual) = (*linhaAtual)->Anterior;
+		(*caracterAtual) = NULL;
+	}
+
 	else
 	{
 		(*LinhaAtual)--;
@@ -166,7 +191,13 @@ void EventUpArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtua
 			(*ColunaAtual) = countLinhaDestino;
 		}
 		else
-			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual -1 ); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+		
+		if ((*caracterAtual) != NULL)
+		{
+			if ((*caracterAtual)->Letra == '\n')
+				(*caracterAtual) = (*caracterAtual)->Anterior;
+		}
 	}
 }
 
@@ -177,14 +208,21 @@ void EventDownArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 	else
 	{
 		(*LinhaAtual)++;
+		countLinhaDestino = CountCaracteresLine(&(*linhaAtual)->Proxima);
 		(*linhaAtual) = (*linhaAtual)->Proxima;
-		countLinhaDestino = CountCaracteresLine(linhaAtual);
 		if ((*ColunaAtual) > countLinhaDestino) {
+			//Vai pro fim
 			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino - 1; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+			
 			(*ColunaAtual) = countLinhaDestino;
 		}
 		else
 			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+		if ((*caracterAtual) != NULL) 
+		{
+			if ((*caracterAtual)->Letra == '\n')
+				(*caracterAtual) = (*caracterAtual)->Anterior;
+		}
 	}
 }
 
@@ -207,19 +245,64 @@ void EventCharKey(char letra, int * LinhaAtual, int * ColunaAtual, Linha ** Text
 	InserirCaractere(letra, atual, linhaAtual);
 	(*ColunaAtual)++;
 }
-void ImprimirTexto(Linha ** Texto, Caractere ** Atual) {
-	
+void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual) {
+	int qtdLinha = 0;
 	Linha * lAux = (*Texto);
 	Caractere * cAux = NULL;
 	system("cls");
+	
+	
 	while (lAux != NULL)
 	{
+		//Altera a cor da linha
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (lAux == (*linhaAtual) ? YELLOW : WHITE));
+
+		qtdLinha++;
 		cAux = lAux->Inicio;
+		printf("%4i. ", qtdLinha);
 		while (cAux != NULL)
 		{
+			//Antes da quebra de linha, printa a quantidade de caracteres
+			if (cAux->Letra == '\n') 
+				printf("(%i)", CountCaracteresLine(&lAux));
 			((*Atual) == cAux ? printf("%c", toupper(cAux->Letra)) : printf("%c", cAux->Letra));
+			
 			cAux = cAux->Proxima;
 		}
 		lAux = lAux->Proxima;
 	}
+}
+
+void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
+	char letra;
+	system("cls");
+	while ((*arq) == NULL) {
+		printf("Informe o diretorio e o nome do arquivo:\n>>");
+		gets(fileDir); fflush(stdin);
+		(*arq) = Abrir(fileDir);
+	}
+	fseek((*arq), 0, 0);
+	while (!feof(*arq))
+	{
+		fread(&letra, sizeof(char), 1, (*arq));
+		if (letra == '\n') {
+			InserirNovaLinha(Texto, linhaAtual, caractereAtual, ColunaAtual);
+			(*LinhaAtual)++;
+			(*ColunaAtual) = 0;
+		}
+		else
+		{ 
+			InserirCaractere(letra, caractereAtual, linhaAtual); 
+			(*ColunaAtual)++;
+		}
+	}
+}
+
+void EventSaveFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
+	if(strcmp(fileDir, "") == 0){
+		printf("Informe o nome do arquivo:\n>>");
+		gets(fileDir); fflush(stdin);
+	}
+	Remover(fileDir);
+	Salvar(Texto, fileDir);
 }
