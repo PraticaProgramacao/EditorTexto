@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <conio.h>
+#include <locale.h>
 
 //Bibliotecas Personalizadas
 #include "FileController.h"
@@ -18,14 +19,16 @@
 #define YELLOW 14
 #define WHITE 15
 
+#define MAX_COLUNA 69
+
 /*
 Cada linha do texto será representada pela struct 'Linha'
 Cada caractere, pela struct 'Caractere'
 
 A lógica segue:
-[Linha] -> [O] <-> [l] <-> [á]
-[Linha] -> [T] <-> [e] <-> [s] <-> [t] <-> [e]
-[Linha] -> [E] <-> [d] <-> [i] <-> [t] <-> [o] <-> [r]
+[Linha] -> [O] <-> [l] <-> [á] <-> [\n]
+[Linha] -> [T] <-> [e] <-> [s] <-> [t] <-> [e] <-> [\n]
+[Linha] -> [E] <-> [d] <-> [i] <-> [t] <-> [o] <-> [r] <-> [\n]
 
 Que representa:
 Olá
@@ -37,10 +40,11 @@ Segundo a lógica, temos as structs abaixo
 
 //Funções primordiais do editor:
 void MoverCursor(int x, int y);
-void ImprimirTexto(Linha * Texto, Caractere ** Atual, Linha ** linhaAtual);
+void ImprimirTexto(Linha * Texto, Caractere ** Atual, Linha ** linhaAtual, char fileDir[]);
+void QuebraLinhaAutomatica(Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * LinhaAtual, int * ColunaAtual, int qtdCaractere);
 
 //Operação de teclados
-void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha * Texto, Caractere ** atual, Linha ** linhaAtual, FILE ** arq, char fileDir[]);
+void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha ** Texto, Caractere ** atual, Linha ** linhaAtual, FILE ** arq, char fileDir[]);
 
 //Eventos de tecla
 
@@ -75,9 +79,9 @@ int main()
 	//Inicia o editor de texto
 	while (1)
 	{
-		ImprimirTexto(&Texto, &caractereAtual, &linhaAtual);
+		ImprimirTexto(&Texto, &caractereAtual, &linhaAtual, fileDir);
 		MoverCursor(ColunaAtual, LinhaAtual);
-		OperarKeyboardInput(GetUserInput(), &LinhaAtual, &ColunaAtual, Texto, &caractereAtual, &linhaAtual, &arquivo, fileDir);
+		OperarKeyboardInput(GetUserInput(), &LinhaAtual, &ColunaAtual, &Texto, &caractereAtual, &linhaAtual, &arquivo, fileDir);
 	}
 }
 
@@ -90,7 +94,7 @@ UPDATE: Alerta erro ao mover o cursor
 void MoverCursor(int x, int y) {
 	COORD coord;
 	coord.X = x + 6;
-	coord.Y = y;
+	coord.Y = y + 1;
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (!SetConsoleCursorPosition(hConsole, coord))
 		printf("Erro ao mover o cursor!");
@@ -211,12 +215,15 @@ void EventDownArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 		(*linhaAtual) = (*linhaAtual)->Proxima;
 		if ((*ColunaAtual) > countLinhaDestino) {
 			//Vai pro fim
-			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
-			
+			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino -1; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+
 			(*ColunaAtual) = countLinhaDestino;
 		}
+		else if ((*caracterAtual) == NULL)
+			return;
 		else
-			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual - 1); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+		
 		if ((*caracterAtual) != NULL) 
 		{
 			if ((*caracterAtual)->Letra == '\n')
@@ -232,30 +239,40 @@ void EventEnter(int * LinhaAtual, int * ColunaAtual, Caractere ** atual, Linha *
 }
 
 void EventBackspace(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
-	DeletarCaractere(linhaAtual, caracterAtual, caracterAtual);
-	(*ColunaAtual)--;
-}
-void EventDelete(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
-	DeletarCaractere(linhaAtual, caracterAtual, &(*caracterAtual)->Proxima);
+	int i = 0;
+	if (DeletarCaractereAtual(linhaAtual, caracterAtual) == DELETE_SUCESS)
+		(*ColunaAtual)--;
+	else
+	{
+		(*ColunaAtual) = CountCaracteresLine(linhaAtual);
+		(*LinhaAtual)--;
+		for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual - 1); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+	}
 }
 
+void EventDelete(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
+	DeletarProximoCaractere(linhaAtual, caracterAtual, &(*caracterAtual)->Proxima);
+}
 
 void EventCharKey(char letra, int * LinhaAtual, int * ColunaAtual, Linha ** Texto, Caractere ** atual, Linha ** linhaAtual) {
 	InserirCaractere(letra, atual, linhaAtual);
 	(*ColunaAtual)++;
+	QuebraLinhaAutomatica(Texto, linhaAtual, atual, LinhaAtual, ColunaAtual, MAX_COLUNA);
 }
-void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual) {
+void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual, char fileDir[]) {
 	int qtdLinha = 0;
 	Linha * lAux = (*Texto);
 	Caractere * cAux = NULL;
 	system("cls");
 	
+	//Imprime o nome do arquivo na primeira linha:
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), RED);
+	(strcmp(fileDir, "") == 0 ? printf("\t\t\t\tDocumento sem titulo\n") : printf("\t\t\t\t%s\n", fileDir));
 	
 	while (lAux != NULL)
 	{
 		//Altera a cor da linha
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (lAux == (*linhaAtual) ? YELLOW : WHITE));
-
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (lAux == (*linhaAtual) ? LIGHTGREEN : WHITE));
 		qtdLinha++;
 		cAux = lAux->Inicio;
 		printf("%4i. ", qtdLinha);
@@ -272,6 +289,17 @@ void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual) {
 	}
 }
 
+void QuebraLinhaAutomatica(Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * LinhaAtual,  int * ColunaAtual, int qtdCaractere) {
+	int i = 0;
+	Caractere * aux;
+	if (CountCaracteresLine(linhaAtual) > qtdCaractere) {
+		for ((*caractereAtual) = (*linhaAtual)->Inicio; i < qtdCaractere; i++, (*caractereAtual) = (*caractereAtual)->Proxima);
+		InserirNovaLinha(Texto, linhaAtual, caractereAtual, ColunaAtual);
+		(*ColunaAtual) = 0;
+		(*LinhaAtual)++;
+	}
+}
+
 void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
 	char letra;
 	system("cls");
@@ -281,10 +309,7 @@ void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linh
 		gets(fileDir); fflush(stdin);
 		(*arq) = Abrir(fileDir);
 	}
-
 	DestruirTexto(Texto, linhaAtual, caractereAtual, LinhaAtual, ColunaAtual);
-
-
 	fseek((*arq), 0, 0);
 	do 
 	{
@@ -304,10 +329,14 @@ void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linh
 }
 
 void EventSaveFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
+	system("cls");
 	if(strcmp(fileDir, "") == 0){
 		printf("Informe o nome do arquivo:\n>>");
 		gets(fileDir); fflush(stdin);
 	}
-	Salvar(Texto, fileDir);
-
+	if (Salvar(Texto, fileDir) == SUCESSO)
+		printf("Arquivo salvo com sucesso!\n");
+	else
+		printf("Erro ao salvar o arquivo. Verifique se há permissão de escrita no disco.\n");
+	system("pause");
 }

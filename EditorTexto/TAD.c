@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+
+
 void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, int * posColuna) {
 	Linha * novaLinha = (Linha *)malloc(sizeof(Linha));
 	Caractere * QuebraLinha = (Caractere *)malloc(sizeof(Caractere));
@@ -61,10 +64,8 @@ int CountCaracteresLine(Linha ** linhaAtual) {
 	int i = 0;
 	Caractere * aux = (*linhaAtual)->Inicio;
 	
-	/*  */
 	if (aux != NULL) 
 	{
-
 		while (aux != NULL)
 		{
 			if(aux->Letra != '\n')
@@ -116,46 +117,83 @@ void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual){
 	}
 }
 
-int DeletarCaractere(Linha ** linhaAtual, Caractere ** caractereAtual, Caractere ** caractereRemover) {
-	Caractere * aux = (*caractereRemover);
-
-	//Backspace
-	if ((*caractereAtual) == (*caractereRemover)) 
+int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual) {
+	Caractere * toDelete = (*caracterAtual);
+	//Juntar linhas (implementar)
+	if (toDelete == NULL) 
 	{
-		if (aux == NULL) {
-			if ((*linhaAtual)->Anterior == NULL)
-				return;
-			else
-			{
-				(*linhaAtual) = (*linhaAtual)->Anterior;
-			}
-		}
-		else if ((*caractereRemover)->Letra != '\n') 
-		{
-			(*caractereAtual) = (*caractereAtual)->Anterior;
-			(*caractereAtual)->Proxima = aux->Proxima;
-			if (aux->Proxima != NULL)
-				aux->Proxima->Anterior = (*caractereAtual);
-			free(aux);
-		}
-
+		Concatenar(&(*linhaAtual)->Anterior, linhaAtual, linhaAtual);
+		return DELETE_FAILURE;
 	}
-	//Delete
 	else
 	{
-		if (aux == NULL) {
-			return;
-		}
-
-		else if ((*caractereRemover)->Letra != '\n') 
+		//Remoção no meio
+		if (toDelete->Proxima != NULL && toDelete->Anterior != NULL)
 		{
-			(*caractereAtual)->Proxima = aux->Proxima;
-			if (aux->Proxima != NULL)
-				aux->Proxima->Anterior = (*caractereAtual);
-
-			free(aux);
+			toDelete->Anterior->Proxima = toDelete->Proxima;
+			toDelete->Proxima->Anterior = toDelete->Anterior;
+			(*caracterAtual) = toDelete->Anterior;
+			free(toDelete);
+		}
+		//Elemento único da lista
+		else if (toDelete->Proxima == NULL && toDelete->Anterior == NULL) 
+		{
+			(*linhaAtual)->Inicio = NULL;
+			(*caracterAtual) = NULL;
+			free(toDelete);
+		}
+		else if (toDelete->Proxima == NULL) {
+			toDelete->Anterior->Proxima = NULL;
+			(*caracterAtual) = toDelete->Anterior;
+			free(toDelete);
+		}
+		else if (toDelete->Anterior == NULL) {
+			toDelete->Proxima->Anterior = NULL;
+			(*linhaAtual)->Inicio = toDelete->Proxima;
+			(*caracterAtual) = NULL;
+			free(toDelete);
 		}
 	}
+	return DELETE_SUCESS;
+}
+int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Caractere ** prox) {
+	Caractere * toDelete;
+	if ((*caracterAtual) == NULL)
+		toDelete = (*linhaAtual)->Inicio;
+	else
+		toDelete = (*prox);
+
+	//Juntar linhas (implementar)
+	if (toDelete == NULL)
+		return DELETE_FAILURE;
+	else
+	{
+		//Remoção no meio
+		if (toDelete->Proxima != NULL && toDelete->Anterior != NULL)
+		{
+			toDelete->Anterior->Proxima = toDelete->Proxima;
+			toDelete->Proxima->Anterior = toDelete->Anterior;
+			free(toDelete);
+		}
+		//Elemento único da lista
+		else if (toDelete->Proxima == NULL && toDelete->Anterior == NULL)
+		{
+			(*linhaAtual)->Inicio = NULL;
+			(*caracterAtual) = NULL;
+			free(toDelete);
+		}
+		else if (toDelete->Proxima == NULL) {
+			toDelete->Anterior->Proxima = NULL;
+			free(toDelete);
+		}
+		else if (toDelete->Anterior == NULL) {
+			toDelete->Proxima->Anterior = NULL;
+			(*linhaAtual)->Inicio = toDelete->Proxima;
+			(*caracterAtual) = NULL;
+			free(toDelete);
+		}
+	}
+	return DELETE_SUCESS;
 }
 
 void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual){
@@ -183,4 +221,28 @@ void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtu
 	(*caracterAtual) = NULL;
 	(*LinhaAtual) = 0;
 	(*ColunaAtual) = 0;
+}
+
+/**/
+void Concatenar(Linha ** linhaSuperior, Linha ** linhaInferior, Linha ** linhaAtual) {
+	int count, i = 0;
+	Caractere * aux;
+	count = CountCaracteresLine(linhaSuperior);
+	for (aux = (*linhaSuperior)->Inicio; i < (count -1) ; aux = aux->Proxima, i++);
+	
+	free(aux->Proxima);
+	
+	aux->Proxima = (*linhaInferior)->Inicio;
+	(*linhaInferior)->Inicio->Anterior = aux;
+
+	(*linhaSuperior)->Proxima = (*linhaInferior)->Proxima;
+	
+	if ((*linhaInferior)->Proxima != NULL)
+		(*linhaInferior)->Proxima->Anterior = (*linhaSuperior);
+
+
+	if ((*linhaAtual) != (*linhaSuperior)) 
+		(*linhaAtual) = (*linhaSuperior);
+	
+	free((*linhaInferior));
 }

@@ -1,6 +1,7 @@
 /* A linha é uma lista duplamente encadeada, para facilitar a movimentação do cursor entre os caracteres */
-#define DELETE_SUCESS	1
-#define DELETE_FAILURE	0
+#define DELETE_FAILURE		0
+#define DELETE_SUCESS		1
+#define DELETE_CONCATENADO	2
 
 typedef struct TCaractere {
 	char Letra;
@@ -20,3 +21,7 @@ void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual);
 int CountCaracteresLine(Linha ** linhaAtual);
 int DeletarCaractere(Linha ** linhaAtual, Caractere ** caractereAtual, Caractere ** caractereRemover);
 void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual);
+
+int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual);
+int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Caractere * prox);
+void Concatenar(Linha ** linhaSuperior, Linha ** linhaInferior, Linha ** linhaAtual);
