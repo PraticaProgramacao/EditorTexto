@@ -111,7 +111,6 @@ void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual){
 
 			(*atual)->Proxima->Anterior = novo;
 			(*atual)->Proxima = novo;
-
 			(*atual) = novo;
 		}
 	}
@@ -122,7 +121,7 @@ int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual) {
 	//Juntar linhas (implementar)
 	if (toDelete == NULL) 
 	{
-		Concatenar(&(*linhaAtual)->Anterior, linhaAtual, linhaAtual);
+		ConcatenarBackspace(linhaAtual);
 		return DELETE_FAILURE;
 	}
 	else
@@ -156,6 +155,7 @@ int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual) {
 	}
 	return DELETE_SUCESS;
 }
+
 int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Caractere ** prox) {
 	Caractere * toDelete;
 	if ((*caracterAtual) == NULL)
@@ -164,8 +164,10 @@ int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Car
 		toDelete = (*prox);
 
 	//Juntar linhas (implementar)
-	if (toDelete == NULL)
+	if (toDelete == NULL) {
+		//ConcatenarDelete(linhaAtual, &(*linhaAtual)->Proxima, linhaAtual);
 		return DELETE_FAILURE;
+	}
 	else
 	{
 		//Remoção no meio
@@ -224,25 +226,25 @@ void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtu
 }
 
 /**/
-void Concatenar(Linha ** linhaSuperior, Linha ** linhaInferior, Linha ** linhaAtual) {
+void ConcatenarBackspace(Linha ** linhaAtual, Linha ** caractereAtual, int * LinhaAtual, int * ColunaAtual) {
 	int count, i = 0;
-	Caractere * aux;
-	count = CountCaracteresLine(linhaSuperior);
-	for (aux = (*linhaSuperior)->Inicio; i < (count -1) ; aux = aux->Proxima, i++);
+	Caractere * ToDelete;
+	Linha * lAux = (*linhaAtual)->Anterior;
+	count = CountCaracteresLine(&lAux);
 	
-	free(aux->Proxima);
-	
-	aux->Proxima = (*linhaInferior)->Inicio;
-	(*linhaInferior)->Inicio->Anterior = aux;
+	for (ToDelete = lAux->Inicio; i < (count -1) ; ToDelete = ToDelete->Proxima, i++);
+	(*caractereAtual) = ToDelete;
 
-	(*linhaSuperior)->Proxima = (*linhaInferior)->Proxima;
-	
-	if ((*linhaInferior)->Proxima != NULL)
-		(*linhaInferior)->Proxima->Anterior = (*linhaSuperior);
+	free(ToDelete->Proxima);
+	ToDelete->Proxima = (*linhaAtual)->Inicio;
 
-
-	if ((*linhaAtual) != (*linhaSuperior)) 
-		(*linhaAtual) = (*linhaSuperior);
+	if ((*linhaAtual)->Inicio != NULL)
+		(*linhaAtual)->Inicio->Anterior = lAux;
+	(*LinhaAtual)--;
+	(*ColunaAtual) = count;
 	
-	free((*linhaInferior));
+	free((*linhaAtual));
+	(*linhaAtual) = lAux;
+	
+	
 }

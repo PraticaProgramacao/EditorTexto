@@ -24,4 +24,5 @@ void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtu
 
 int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual);
 int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Caractere * prox);
-void Concatenar(Linha ** linhaSuperior, Linha ** linhaInferior, Linha ** linhaAtual);
+void ConcatenarBackspace(Linha ** linhaAtual);
+//void Concatenar(Linha ** linhaSuperior, Linha ** linhaInferior, Linha ** linhaAtual);

@@ -20,6 +20,7 @@ Description: Controla os comandos de teclado (input)
 #define BACKSPACE			7
 #define DELETE				8
 #define ENTER				9
+#define ESC					10
 typedef struct TKeyboard {
 	char Key;
 	int Command; //Indica o comando que foi dado pelo usuário, caso seja 0, indica uma letra

@@ -43,6 +43,8 @@ Keyboard GetUserInput() {
 			c.Command = SAVE_FILE;
 		else if (ch1 == 1)
 			c.Command = OPEN_FILE;
+		else if (ch1 == 27)
+			c.Command = ESC;
 		else
 			c.Key = ch1;
 

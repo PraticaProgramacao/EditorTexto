@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <conio.h>
-#include <locale.h>
 
 //Bibliotecas Personalizadas
 #include "FileController.h"
@@ -120,6 +119,8 @@ void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual,
 		EventSaveFile(arq, fileDir, Texto, linhaAtual, atual, ColunaAtual, LinhaAtual);
 	else if (keyboard.Command == OPEN_FILE)
 		EventOpenFile(arq, fileDir, Texto, linhaAtual, atual, ColunaAtual, LinhaAtual);
+	else if (keyboard.Command == ESC)
+		return;
 	else if(keyboard.Key != NULL)
 		EventCharKey(keyboard.Key, LinhaAtual, ColunaAtual, Texto, atual, linhaAtual);
 }
@@ -259,6 +260,7 @@ void EventCharKey(char letra, int * LinhaAtual, int * ColunaAtual, Linha ** Text
 	(*ColunaAtual)++;
 	QuebraLinhaAutomatica(Texto, linhaAtual, atual, LinhaAtual, ColunaAtual, MAX_COLUNA);
 }
+
 void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual, char fileDir[]) {
 	int qtdLinha = 0;
 	Linha * lAux = (*Texto);
@@ -325,7 +327,7 @@ void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linh
 				(*ColunaAtual)++;
 			}
 		}
-	} while ((!feof(*arq)));
+	} while (!feof(*arq));
 }
 
 void EventSaveFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
