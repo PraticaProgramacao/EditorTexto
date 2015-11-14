@@ -18,7 +18,7 @@ void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, i
 	QuebraLinha->Letra = '\n';
 	QuebraLinha->Anterior = NULL;
 	QuebraLinha->Proxima = NULL;
-	
+
 	//Se for no início da linha
 	if ((*atual) == NULL)
 	{
@@ -28,18 +28,18 @@ void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, i
 
 		novaLinha->Inicio = QuebraLinha;
 		novaLinha->Anterior = (*linhaAtual)->Anterior;
-		novaLinha->Proxima  = (*linhaAtual);
-		if((*linhaAtual)->Anterior != NULL)
+		novaLinha->Proxima = (*linhaAtual);
+		if ((*linhaAtual)->Anterior != NULL)
 			(*linhaAtual)->Anterior->Proxima = novaLinha;
 		(*linhaAtual)->Anterior = novaLinha;
 
 	}
-	else 
+	else
 	{
 		//Definições da quebra de linha
 		QuebraLinha->Anterior = (*atual);
 		QuebraLinha->Proxima = NULL;
-		
+
 		novaLinha->Inicio = (*atual)->Proxima;
 		if (novaLinha->Inicio != NULL)
 			novaLinha->Inicio->Anterior = NULL;
@@ -48,13 +48,13 @@ void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, i
 
 		novaLinha->Anterior = (*linhaAtual);
 		novaLinha->Proxima = (*linhaAtual)->Proxima;
-		
-		if((*linhaAtual)->Proxima != NULL)
+
+		if ((*linhaAtual)->Proxima != NULL)
 			(*linhaAtual)->Proxima->Anterior = novaLinha;
-		
+
 		(*linhaAtual)->Proxima = novaLinha;
 		(*atual) = NULL;
-		
+
 		(*linhaAtual) = novaLinha;
 	}
 }
@@ -63,12 +63,12 @@ int CountCaracteresLine(Linha ** linhaAtual) {
 	/* Inicialmente todas as linhas tem 0 caracteres, então: */
 	int i = 0;
 	Caractere * aux = (*linhaAtual)->Inicio;
-	
-	if (aux != NULL) 
+
+	if (aux != NULL)
 	{
 		while (aux != NULL)
 		{
-			if(aux->Letra != '\n')
+			if (aux->Letra != '\n')
 				i++;
 			aux = aux->Proxima;
 		}
@@ -86,16 +86,16 @@ void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual){
 	if ((*atual) == NULL)
 	{
 		*atual = novo;
-		if ((*linhaAtual)->Inicio == NULL) 
+		if ((*linhaAtual)->Inicio == NULL)
 			(*linhaAtual)->Inicio = (*atual);
-		else 
+		else
 		{
 			novo->Proxima = (*linhaAtual)->Inicio;
 			(*linhaAtual)->Inicio->Anterior = novo;
 			(*linhaAtual)->Inicio = novo;
 		}
 	}
-	else 
+	else
 	{
 		//Inserção no fim
 		if ((*atual)->Proxima == NULL) {
@@ -119,7 +119,7 @@ void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual){
 int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual) {
 	Caractere * toDelete = (*caracterAtual);
 	//Juntar linhas (implementar)
-	if (toDelete == NULL) 
+	if (toDelete == NULL)
 	{
 		ConcatenarBackspace(linhaAtual);
 		return DELETE_FAILURE;
@@ -135,7 +135,7 @@ int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual) {
 			free(toDelete);
 		}
 		//Elemento único da lista
-		else if (toDelete->Proxima == NULL && toDelete->Anterior == NULL) 
+		else if (toDelete->Proxima == NULL && toDelete->Anterior == NULL)
 		{
 			(*linhaAtual)->Inicio = NULL;
 			(*caracterAtual) = NULL;
@@ -206,7 +206,7 @@ void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtu
 	{
 		lAuxProx = lAux->Proxima;
 		cAux = lAux->Inicio;
-		while (cAux!=NULL)
+		while (cAux != NULL)
 		{
 			cAuxProx = cAux->Proxima;
 			free(cAux);
@@ -231,8 +231,8 @@ void ConcatenarBackspace(Linha ** linhaAtual, Linha ** caractereAtual, int * Lin
 	Caractere * ToDelete;
 	Linha * lAux = (*linhaAtual)->Anterior;
 	count = CountCaracteresLine(&lAux);
-	
-	for (ToDelete = lAux->Inicio; i < (count -1) ; ToDelete = ToDelete->Proxima, i++);
+
+	for (ToDelete = lAux->Inicio; i < (count - 1); ToDelete = ToDelete->Proxima, i++);
 	(*caractereAtual) = ToDelete;
 
 	free(ToDelete->Proxima);
@@ -242,9 +242,9 @@ void ConcatenarBackspace(Linha ** linhaAtual, Linha ** caractereAtual, int * Lin
 		(*linhaAtual)->Inicio->Anterior = lAux;
 	(*LinhaAtual)--;
 	(*ColunaAtual) = count;
-	
+
 	free((*linhaAtual));
 	(*linhaAtual) = lAux;
-	
-	
+
+
 }

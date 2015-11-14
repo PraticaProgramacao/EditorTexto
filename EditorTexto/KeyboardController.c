@@ -1,7 +1,7 @@
 #include "KeyboardController.h"
 
 Keyboard GetUserInput() {
-	
+
 	Keyboard c;
 	int ch1, ch2;
 	ch1 = getch();
@@ -33,7 +33,7 @@ Keyboard GetUserInput() {
 			break;
 		}
 	}
-	else 
+	else
 	{
 		if (ch1 == 8)
 			c.Command = BACKSPACE;

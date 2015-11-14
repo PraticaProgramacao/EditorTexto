@@ -2,6 +2,7 @@
 Author: Lucas Simas
 Description: Controla os comandos de teclado (input)
 */
+#include <stdio.h>
 #include <ctype.h>
 #include <conio.h>
 

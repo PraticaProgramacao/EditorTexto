@@ -4,13 +4,13 @@ Cabeçalho das funções com seus respectivos comentarios.
 */
 #include "FileController.h"
 
-FILE * Criar (char nome[]) {
+FILE * Criar(char nome[]) {
 	FILE *arq;
-	arq = fopen(nome, "w+");		
+	arq = fopen(nome, "w+");
 	return arq;
 }
 
-void Fechar (FILE *arq)
+void Fechar(FILE *arq)
 {
 	int status;
 	status = fclose(arq);
@@ -20,13 +20,13 @@ void Fechar (FILE *arq)
 	else
 		printf("Erro no fechamento do arquivo.\n");
 }
- 
 
-FILE * Abrir (char nome[])
+
+FILE * Abrir(char nome[])
 {
 	FILE * arq;
 	int status;
-	arq = fopen(nome,"r");
+	arq = fopen(nome, "r");
 	return arq;
 }
 
@@ -48,7 +48,7 @@ int Salvar(Linha ** Texto, char fileDir[200]) {
 		}
 		lAux = lAux->Proxima;
 	}
-	if(fclose(arq) == 0)
+	if (fclose(arq) == 0)
 		return SUCESSO;
 	else return FAILURE;
 }

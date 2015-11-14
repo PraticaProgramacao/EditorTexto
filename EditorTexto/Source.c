@@ -63,7 +63,7 @@ int main()
 {
 	int LinhaAtual = 0; //indica a linha atual que o cursor está repousando
 	int ColunaAtual = 0; //indica a coluna atual que o cursor está repousando
-	
+
 	FILE * arquivo = NULL;
 	char fileDir[200] = "";
 	//Configuração inicial do texto
@@ -100,7 +100,7 @@ void MoverCursor(int x, int y) {
 }
 
 void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha ** Texto, Caractere ** atual, Linha ** linhaAtual, FILE ** arq, char fileDir[]) {
-	
+
 	if (keyboard.Command == UP_ARROW)
 		EventUpArrow(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
 	else if (keyboard.Command == DOWN_ARROW)
@@ -121,7 +121,7 @@ void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual,
 		EventOpenFile(arq, fileDir, Texto, linhaAtual, atual, ColunaAtual, LinhaAtual);
 	else if (keyboard.Command == ESC)
 		return;
-	else if(keyboard.Key != NULL)
+	else if (keyboard.Key != NULL)
 		EventCharKey(keyboard.Key, LinhaAtual, ColunaAtual, Texto, atual, linhaAtual);
 }
 
@@ -129,12 +129,12 @@ void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual,
 /* Evento é chamado quando a tecla pra o lado esquerdo é pressionada */
 void EventLeftArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual){
 	int i = 0;
-	if ((*ColunaAtual) > 0) 
+	if ((*ColunaAtual) > 0)
 	{
 		(*ColunaAtual)--;
 		(*caracterAtual) = (*caracterAtual)->Anterior;
 	}
-	else 
+	else
 	{
 		if ((*linhaAtual)->Anterior != NULL)
 		{
@@ -142,7 +142,7 @@ void EventLeftArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 			(*linhaAtual) = (*linhaAtual)->Anterior;
 			*ColunaAtual = CountCaracteresLine(linhaAtual);
 			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
-			
+
 			if ((*caracterAtual) != NULL)
 			{
 				if ((*caracterAtual)->Letra == '\n')
@@ -191,12 +191,12 @@ void EventUpArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtua
 		(*linhaAtual) = (*linhaAtual)->Anterior;
 		countLinhaDestino = CountCaracteresLine(linhaAtual);
 		if ((*ColunaAtual) > countLinhaDestino) {
-			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino-1; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino - 1; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
 			(*ColunaAtual) = countLinhaDestino;
 		}
 		else
-			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual -1 ); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
-		
+			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual - 1); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+
 		if ((*caracterAtual) != NULL)
 		{
 			if ((*caracterAtual)->Letra == '\n')
@@ -216,7 +216,7 @@ void EventDownArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 		(*linhaAtual) = (*linhaAtual)->Proxima;
 		if ((*ColunaAtual) > countLinhaDestino) {
 			//Vai pro fim
-			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino -1; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
+			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino - 1; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
 
 			(*ColunaAtual) = countLinhaDestino;
 		}
@@ -224,8 +224,8 @@ void EventDownArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 			return;
 		else
 			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual - 1); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
-		
-		if ((*caracterAtual) != NULL) 
+
+		if ((*caracterAtual) != NULL)
 		{
 			if ((*caracterAtual)->Letra == '\n')
 				(*caracterAtual) = (*caracterAtual)->Anterior;
@@ -266,11 +266,11 @@ void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual, char
 	Linha * lAux = (*Texto);
 	Caractere * cAux = NULL;
 	system("cls");
-	
+
 	//Imprime o nome do arquivo na primeira linha:
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), RED);
 	(strcmp(fileDir, "") == 0 ? printf("\t\t\t\tDocumento sem titulo\n") : printf("\t\t\t\t%s\n", fileDir));
-	
+
 	while (lAux != NULL)
 	{
 		//Altera a cor da linha
@@ -281,17 +281,17 @@ void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual, char
 		while (cAux != NULL)
 		{
 			//Antes da quebra de linha, printa a quantidade de caracteres
-			if (cAux->Letra == '\n') 
+			if (cAux->Letra == '\n')
 				printf("(%i)", CountCaracteresLine(&lAux));
 			((*Atual) == cAux ? printf("%c", toupper(cAux->Letra)) : printf("%c", cAux->Letra));
-			
+
 			cAux = cAux->Proxima;
 		}
 		lAux = lAux->Proxima;
 	}
 }
 
-void QuebraLinhaAutomatica(Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * LinhaAtual,  int * ColunaAtual, int qtdCaractere) {
+void QuebraLinhaAutomatica(Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * LinhaAtual, int * ColunaAtual, int qtdCaractere) {
 	int i = 0;
 	Caractere * aux;
 	if (CountCaracteresLine(linhaAtual) > qtdCaractere) {
@@ -313,7 +313,7 @@ void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linh
 	}
 	DestruirTexto(Texto, linhaAtual, caractereAtual, LinhaAtual, ColunaAtual);
 	fseek((*arq), 0, 0);
-	do 
+	do
 	{
 		if (fread(&letra, sizeof(char), 1, (*arq)) == 1) {
 			if (letra == '\n') {
@@ -332,7 +332,7 @@ void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linh
 
 void EventSaveFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
 	system("cls");
-	if(strcmp(fileDir, "") == 0){
+	if (strcmp(fileDir, "") == 0){
 		printf("Informe o nome do arquivo:\n>>");
 		gets(fileDir); fflush(stdin);
 	}
