@@ -3,6 +3,9 @@
 Keyboard GetUserInput() {
 
 	Keyboard c;
+	c.Command = 0;
+	c.Key = NULL;
+
 	int ch1, ch2;
 	ch1 = getch();
 	ch2 = 0;
@@ -45,7 +48,7 @@ Keyboard GetUserInput() {
 			c.Command = OPEN_FILE;
 		else if (ch1 == 27)
 			c.Command = ESC;
-		else
+		else if (ispunct(ch1) || isalnum(ch1) || isspace(ch1) || isprint(ch1))
 			c.Key = ch1;
 
 	}

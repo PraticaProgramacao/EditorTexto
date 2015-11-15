@@ -18,11 +18,13 @@ typedef struct TLinha {
 
 void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, int * posColuna);
 void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual);
-int CountCaracteresLine(Linha ** linhaAtual);
+int CountCaracteresLine(Linha * linhaAtual);
 int DeletarCaractere(Linha ** linhaAtual, Caractere ** caractereAtual, Caractere ** caractereRemover);
 void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual);
 
-int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual);
+int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual);
 int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Caractere * prox);
-void ConcatenarBackspace(Linha ** linhaAtual);
+void ConcatenarBackspace(Linha ** linhaAtual, Linha ** caractereAtual, int * LinhaAtual, int * ColunaAtual);
+void DeletarLinhaBackspace(Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual);
+
 //void Concatenar(Linha ** linhaSuperior, Linha ** linhaInferior, Linha ** linhaAtual);

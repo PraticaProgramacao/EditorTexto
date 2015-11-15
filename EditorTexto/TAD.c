@@ -59,10 +59,10 @@ void InserirNovaLinha(Linha ** Texto, Linha ** linhaAtual, Caractere ** atual, i
 	}
 }
 
-int CountCaracteresLine(Linha ** linhaAtual) {
+int CountCaracteresLine(Linha * linhaAtual) {
 	/* Inicialmente todas as linhas tem 0 caracteres, então: */
 	int i = 0;
-	Caractere * aux = (*linhaAtual)->Inicio;
+	Caractere * aux = linhaAtual->Inicio;
 
 	if (aux != NULL)
 	{
@@ -116,13 +116,13 @@ void InserirCaractere(char letra, Caractere ** atual, Linha ** linhaAtual){
 	}
 }
 
-int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual) {
+int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual) {
 	Caractere * toDelete = (*caracterAtual);
 	//Juntar linhas (implementar)
 	if (toDelete == NULL)
 	{
-		ConcatenarBackspace(linhaAtual);
-		return DELETE_FAILURE;
+		ConcatenarBackspace(linhaAtual, caracterAtual, LinhaAtual, ColunaAtual);
+		return DELETE_CONCATENADO;
 	}
 	else
 	{
@@ -225,26 +225,78 @@ void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtu
 	(*ColunaAtual) = 0;
 }
 
-/**/
 void ConcatenarBackspace(Linha ** linhaAtual, Linha ** caractereAtual, int * LinhaAtual, int * ColunaAtual) {
 	int count, i = 0;
 	Caractere * ToDelete;
 	Linha * lAux = (*linhaAtual)->Anterior;
-	count = CountCaracteresLine(&lAux);
+	if (lAux == NULL)
+		return;
+	
+	count = CountCaracteresLine(lAux);
 
 	for (ToDelete = lAux->Inicio; i < (count - 1); ToDelete = ToDelete->Proxima, i++);
 	(*caractereAtual) = ToDelete;
+
+	if (CountCaracteresLine((*linhaAtual)) == 0){
+		DeletarLinhaBackspace(linhaAtual, caractereAtual, LinhaAtual, ColunaAtual);
+		return;
+	}
 
 	free(ToDelete->Proxima);
 	ToDelete->Proxima = (*linhaAtual)->Inicio;
 
 	if ((*linhaAtual)->Inicio != NULL)
-		(*linhaAtual)->Inicio->Anterior = lAux;
+		(*linhaAtual)->Inicio->Anterior = ToDelete;
+	
+	lAux->Proxima = (*linhaAtual)->Proxima;
+
 	(*LinhaAtual)--;
 	(*ColunaAtual) = count;
 
 	free((*linhaAtual));
 	(*linhaAtual) = lAux;
 
+}
 
+/*
+Deleta uma linha
+*/
+void DeletarLinhaBackspace(Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual){
+	Linha * toDelete = (*linhaAtual);
+	Caractere * cToDelete;
+	int count, i = 0;
+	//se houver caractere na linha atual, remove
+	if ((*linhaAtual)->Inicio != NULL)
+		free(toDelete->Inicio);
+
+	//Define a linha anterior como sendo a linha atual
+	(*linhaAtual) = toDelete->Anterior;
+
+	//Define próxima e anterior
+	(*linhaAtual)->Proxima = toDelete->Proxima;
+	if (toDelete->Proxima != NULL)
+		toDelete->Proxima->Anterior = (*linhaAtual);
+	//Verifica se é última linha(remover \n da linha anterior)
+	else
+	{
+		count = CountCaracteresLine((*linhaAtual));
+		for (cToDelete = (*linhaAtual)->Inicio; i < (count - 1); cToDelete = cToDelete->Proxima, i++);
+		if (cToDelete->Letra == '\n')
+		{
+			free(cToDelete);
+			(*linhaAtual)->Inicio = NULL;
+			(*caracterAtual) = NULL;
+		}
+		else
+		{
+			free(cToDelete->Proxima);
+			cToDelete->Proxima = NULL;
+		}
+	}
+
+	//Desaloca a linha
+	free(toDelete);
+
+	(*LinhaAtual)--;
+	(*ColunaAtual) = CountCaracteresLine((*linhaAtual));
 }

@@ -18,7 +18,7 @@
 #define YELLOW 14
 #define WHITE 15
 
-#define MAX_COLUNA 69
+#define MAX_COLUNA 68
 
 /*
 Cada linha do texto será representada pela struct 'Linha'
@@ -39,7 +39,7 @@ Segundo a lógica, temos as structs abaixo
 
 //Funções primordiais do editor:
 void MoverCursor(int x, int y);
-void ImprimirTexto(Linha * Texto, Caractere ** Atual, Linha ** linhaAtual, char fileDir[]);
+void ImprimirTexto(Linha * Texto, Caractere * Atual, Linha * linhaAtual, char fileDir[]);
 void QuebraLinhaAutomatica(Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * LinhaAtual, int * ColunaAtual, int qtdCaractere);
 
 //Operação de teclados
@@ -78,9 +78,10 @@ int main()
 	//Inicia o editor de texto
 	while (1)
 	{
-		ImprimirTexto(&Texto, &caractereAtual, &linhaAtual, fileDir);
+		ImprimirTexto(Texto, caractereAtual, linhaAtual, fileDir);
 		MoverCursor(ColunaAtual, LinhaAtual);
-		OperarKeyboardInput(GetUserInput(), &LinhaAtual, &ColunaAtual, &Texto, &caractereAtual, &linhaAtual, &arquivo, fileDir);
+		keyboard = GetUserInput();
+		OperarKeyboardInput(keyboard, &LinhaAtual, &ColunaAtual, &Texto, &caractereAtual, &linhaAtual, &arquivo, fileDir);
 	}
 }
 
@@ -99,30 +100,30 @@ void MoverCursor(int x, int y) {
 		printf("Erro ao mover o cursor!");
 }
 
-void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha ** Texto, Caractere ** atual, Linha ** linhaAtual, FILE ** arq, char fileDir[]) {
+void OperarKeyboardInput(Keyboard keyboard, int * LinhaAtual, int * ColunaAtual, Linha ** Texto, Caractere ** caractereAtual, Linha ** linhaAtual, FILE ** arq, char fileDir[]) {
 
 	if (keyboard.Command == UP_ARROW)
-		EventUpArrow(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
+		EventUpArrow(LinhaAtual, ColunaAtual, caractereAtual, Texto, linhaAtual);
 	else if (keyboard.Command == DOWN_ARROW)
-		EventDownArrow(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
+		EventDownArrow(LinhaAtual, ColunaAtual, caractereAtual, Texto, linhaAtual);
 	else if (keyboard.Command == LEFT_ARROW)
-		EventLeftArrow(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
+		EventLeftArrow(LinhaAtual, ColunaAtual, caractereAtual, Texto, linhaAtual);
 	else if (keyboard.Command == RIGHT_ARROW)
-		EventRightArrow(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
+		EventRightArrow(LinhaAtual, ColunaAtual, caractereAtual, Texto, linhaAtual);
 	else if (keyboard.Command == DELETE)
-		EventDelete(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
+		EventDelete(LinhaAtual, ColunaAtual, caractereAtual, Texto, linhaAtual);
 	else if (keyboard.Command == BACKSPACE)
-		EventBackspace(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
+		EventBackspace(LinhaAtual, ColunaAtual, caractereAtual, Texto, linhaAtual);
 	else if (keyboard.Command == ENTER)
-		EventEnter(LinhaAtual, ColunaAtual, atual, Texto, linhaAtual);
+		EventEnter(LinhaAtual, ColunaAtual, caractereAtual, Texto, linhaAtual);
 	else if (keyboard.Command == SAVE_FILE)
-		EventSaveFile(arq, fileDir, Texto, linhaAtual, atual, ColunaAtual, LinhaAtual);
+		EventSaveFile(arq, fileDir, Texto, linhaAtual, caractereAtual, ColunaAtual, LinhaAtual);
 	else if (keyboard.Command == OPEN_FILE)
-		EventOpenFile(arq, fileDir, Texto, linhaAtual, atual, ColunaAtual, LinhaAtual);
+		EventOpenFile(arq, fileDir, Texto, linhaAtual, caractereAtual, ColunaAtual, LinhaAtual);
 	else if (keyboard.Command == ESC)
 		return;
 	else if (keyboard.Key != NULL)
-		EventCharKey(keyboard.Key, LinhaAtual, ColunaAtual, Texto, atual, linhaAtual);
+		EventCharKey(keyboard.Key, LinhaAtual, ColunaAtual, Texto, caractereAtual, linhaAtual);
 }
 
 
@@ -140,7 +141,7 @@ void EventLeftArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 		{
 			(*LinhaAtual)--;
 			(*linhaAtual) = (*linhaAtual)->Anterior;
-			*ColunaAtual = CountCaracteresLine(linhaAtual);
+			*ColunaAtual = CountCaracteresLine((*linhaAtual));
 			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
 
 			if ((*caracterAtual) != NULL)
@@ -152,9 +153,8 @@ void EventLeftArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 	}
 }
 
-/**/
 void EventRightArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
-	int qntCaracteres = CountCaracteresLine(linhaAtual);
+	int qntCaracteres = CountCaracteresLine((*linhaAtual));
 	if ((*ColunaAtual) < qntCaracteres)
 	{
 		(*ColunaAtual)++;
@@ -189,7 +189,7 @@ void EventUpArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtua
 	{
 		(*LinhaAtual)--;
 		(*linhaAtual) = (*linhaAtual)->Anterior;
-		countLinhaDestino = CountCaracteresLine(linhaAtual);
+		countLinhaDestino = CountCaracteresLine((*linhaAtual));
 		if ((*ColunaAtual) > countLinhaDestino) {
 			for ((*caracterAtual) = (*linhaAtual)->Inicio; i < countLinhaDestino - 1; (*caracterAtual) = (*caracterAtual)->Proxima, i++);
 			(*ColunaAtual) = countLinhaDestino;
@@ -212,7 +212,7 @@ void EventDownArrow(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAt
 	else
 	{
 		(*LinhaAtual)++;
-		countLinhaDestino = CountCaracteresLine(&(*linhaAtual)->Proxima);
+		countLinhaDestino = CountCaracteresLine((*linhaAtual)->Proxima);
 		(*linhaAtual) = (*linhaAtual)->Proxima;
 		if ((*ColunaAtual) > countLinhaDestino) {
 			//Vai pro fim
@@ -240,15 +240,9 @@ void EventEnter(int * LinhaAtual, int * ColunaAtual, Caractere ** atual, Linha *
 }
 
 void EventBackspace(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
-	int i = 0;
-	if (DeletarCaractereAtual(linhaAtual, caracterAtual) == DELETE_SUCESS)
+	if (DeletarCaractereAtual(linhaAtual, caracterAtual, LinhaAtual, ColunaAtual) == DELETE_SUCESS)
 		(*ColunaAtual)--;
-	else
-	{
-		(*ColunaAtual) = CountCaracteresLine(linhaAtual);
-		(*LinhaAtual)--;
-		for ((*caracterAtual) = (*linhaAtual)->Inicio; i < (*ColunaAtual - 1); (*caracterAtual) = (*caracterAtual)->Proxima, i++);
-	}
+	
 }
 
 void EventDelete(int * LinhaAtual, int * ColunaAtual, Caractere ** caracterAtual, Linha ** Texto, Linha ** linhaAtual) {
@@ -261,9 +255,9 @@ void EventCharKey(char letra, int * LinhaAtual, int * ColunaAtual, Linha ** Text
 	QuebraLinhaAutomatica(Texto, linhaAtual, atual, LinhaAtual, ColunaAtual, MAX_COLUNA);
 }
 
-void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual, char fileDir[]) {
+void ImprimirTexto(Linha * Texto, Caractere * caractereAtual, Linha * linhaAtual, char fileDir[]) {
 	int qtdLinha = 0;
-	Linha * lAux = (*Texto);
+	Linha * lAux = Texto;
 	Caractere * cAux = NULL;
 	system("cls");
 
@@ -274,7 +268,7 @@ void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual, char
 	while (lAux != NULL)
 	{
 		//Altera a cor da linha
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (lAux == (*linhaAtual) ? LIGHTGREEN : WHITE));
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (lAux == linhaAtual) ? LIGHTGREEN : WHITE);
 		qtdLinha++;
 		cAux = lAux->Inicio;
 		printf("%4i. ", qtdLinha);
@@ -282,8 +276,8 @@ void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual, char
 		{
 			//Antes da quebra de linha, printa a quantidade de caracteres
 			if (cAux->Letra == '\n')
-				printf("(%i)", CountCaracteresLine(&lAux));
-			((*Atual) == cAux ? printf("%c", toupper(cAux->Letra)) : printf("%c", cAux->Letra));
+				printf("(%i)", CountCaracteresLine(lAux));
+			(caractereAtual == cAux ? printf("%c", toupper(cAux->Letra)) : printf("%c", cAux->Letra));
 
 			cAux = cAux->Proxima;
 		}
@@ -294,7 +288,7 @@ void ImprimirTexto(Linha ** Texto, Caractere ** Atual, Linha ** linhaAtual, char
 void QuebraLinhaAutomatica(Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * LinhaAtual, int * ColunaAtual, int qtdCaractere) {
 	int i = 0;
 	Caractere * aux;
-	if (CountCaracteresLine(linhaAtual) > qtdCaractere) {
+	if (CountCaracteresLine((*linhaAtual)) > qtdCaractere) {
 		for ((*caractereAtual) = (*linhaAtual)->Inicio; i < qtdCaractere; i++, (*caractereAtual) = (*caractereAtual)->Proxima);
 		InserirNovaLinha(Texto, linhaAtual, caractereAtual, ColunaAtual);
 		(*ColunaAtual) = 0;
