@@ -158,12 +158,27 @@ int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual, int *
 
 int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Caractere ** prox) {
 	Caractere * toDelete;
+	Linha * lAux;
 	if ((*caracterAtual) == NULL)
 		toDelete = (*linhaAtual)->Inicio;
 	else
-		toDelete = (*prox);
+	{
 
-	//Juntar linhas (implementar)
+		while (toDelete->Proxima->Letra != '\n') //Loop para chegar no elemento antes do '\n'
+		{
+
+			toDelete = toDelete->Proxima;
+		}
+		free(toDelete->Proxima); //Free na struct do '\n'
+		lAux = *linhaAtual;     //Ponteiro auxiliar de linha
+		toDelete->Proxima = lAux->Proxima->Inicio; //Faz a ligação do elemento anterior ao \n, com o primeiro da proxima linha
+		toDelete->Proxima->Anterior = toDelete;   //Continua a ligação
+		lAux->Proxima = lAux->Proxima->Proxima; //Faz a ligação das linhas
+		lAux->Proxima->Proxima->Anterior = lAux; // Continuação da ligação das linhas
+		free(lAux->Proxima); //Desacola a linha de baixo
+
+	}
+	
 	if (toDelete == NULL) {
 		//ConcatenarDelete(linhaAtual, &(*linhaAtual)->Proxima, linhaAtual);
 		return DELETE_FAILURE;
