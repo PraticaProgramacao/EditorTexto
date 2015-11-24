@@ -158,59 +158,43 @@ int DeletarCaractereAtual(Linha ** linhaAtual, Caractere ** caracterAtual, int *
 
 int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Caractere ** prox) {
 	Caractere * toDelete;
-	Linha * lAux;
-	if ((*caracterAtual) == NULL)
-		toDelete = (*linhaAtual)->Inicio;
-	else
+	Linha * lAux, *lAuxToDelete;
+	lAux = (*linhaAtual);
+	lAuxToDelete = lAux->Proxima;
+	toDelete = (*caracterAtual);
+
+
+
+	if (toDelete == NULL)
 	{
+		toDelete = lAux->Inicio;
+		lAux->Inicio = toDelete->Proxima; //Inicio da linha, aponta para o toDelete próximo
+		if (toDelete->Proxima != NULL)
+			toDelete->Proxima->Anterior = lAux->Inicio; //O anterior do toDelete próximo aponta para o inicio da linha
+		free(toDelete); //Desaloca o toDelete
 
-		while (toDelete->Proxima->Letra != '\n') //Loop para chegar no elemento antes do '\n'
-		{
-
-			toDelete = toDelete->Proxima;
-		}
+	}
+	else if (toDelete->Proxima->Letra == '\n' && lAux->Proxima != NULL) //Remoção no fim
+	{
 		free(toDelete->Proxima); //Free na struct do '\n'
-		lAux = *linhaAtual;     //Ponteiro auxiliar de linha
-		toDelete->Proxima = lAux->Proxima->Inicio; //Faz a ligação do elemento anterior ao \n, com o primeiro da proxima linha
+		toDelete->Proxima = lAux->Proxima->Inicio; //Faz a ligação do ultimo elemento da linha atual, com o primeiro da proxima linha
 		toDelete->Proxima->Anterior = toDelete;   //Continua a ligação
-		lAux->Proxima = lAux->Proxima->Proxima; //Faz a ligação das linhas
-		lAux->Proxima->Proxima->Anterior = lAux; // Continuação da ligação das linhas
-		free(lAux->Proxima); //Desacola a linha de baixo
+		lAux->Proxima = lAuxToDelete->Proxima;
+		free(lAuxToDelete); //Desaloca a linha de baixo
 
 	}
-	
-	if (toDelete == NULL) {
-		//ConcatenarDelete(linhaAtual, &(*linhaAtual)->Proxima, linhaAtual);
-		return DELETE_FAILURE;
-	}
-	else
+	else if (toDelete->Proxima != NULL && toDelete->Anterior != NULL)//Remoção meio
 	{
-		//Remoção no meio
-		if (toDelete->Proxima != NULL && toDelete->Anterior != NULL)
-		{
-			toDelete->Anterior->Proxima = toDelete->Proxima;
-			toDelete->Proxima->Anterior = toDelete->Anterior;
-			free(toDelete);
-		}
-		//Elemento único da lista
-		else if (toDelete->Proxima == NULL && toDelete->Anterior == NULL)
-		{
-			(*linhaAtual)->Inicio = NULL;
-			(*caracterAtual) = NULL;
-			free(toDelete);
-		}
-		else if (toDelete->Proxima == NULL) {
-			toDelete->Anterior->Proxima = NULL;
-			free(toDelete);
-		}
-		else if (toDelete->Anterior == NULL) {
-			toDelete->Proxima->Anterior = NULL;
-			(*linhaAtual)->Inicio = toDelete->Proxima;
-			(*caracterAtual) = NULL;
-			free(toDelete);
-		}
+		toDelete = (*caracterAtual)->Proxima; //Pocisiona o toDelete,para o caracter que vai ser deletado
+		(*caracterAtual)->Proxima = toDelete->Proxima; //Faz a ligação do elemento anterior com o toDelete,com o proximo
+		toDelete->Proxima->Anterior = (*caracterAtual);//Continua a ligação
+		free(toDelete); //Desaloca o toDelete
 	}
+
+
+
 	return DELETE_SUCESS;
+
 }
 
 void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual){
