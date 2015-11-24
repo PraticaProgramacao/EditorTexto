@@ -162,9 +162,7 @@ int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Car
 	lAux = (*linhaAtual);
 	lAuxToDelete = lAux->Proxima;
 	toDelete = (*caracterAtual);
-
-
-
+	
 	if (toDelete == NULL)
 	{
 		toDelete = lAux->Inicio;
@@ -196,7 +194,6 @@ int DeletarProximoCaractere(Linha ** linhaAtual, Caractere ** caracterAtual, Car
 	return DELETE_SUCESS;
 
 }
-
 void DestruirTexto(Linha ** Texto, Linha ** linhaAtual, Caractere ** caracterAtual, int * LinhaAtual, int * ColunaAtual){
 	Linha * lAux = (*Texto), *lAuxProx;
 	Caractere * cAux, *cAuxProx;
