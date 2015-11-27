@@ -299,6 +299,7 @@ void QuebraLinhaAutomatica(Linha ** Texto, Linha ** linhaAtual, Caractere ** car
 void EventOpenFile(FILE ** arq, char fileDir[200], Linha ** Texto, Linha ** linhaAtual, Caractere ** caractereAtual, int * ColunaAtual, int * LinhaAtual) {
 	char letra;
 	system("cls");
+	(*arq) = NULL;
 	while ((*arq) == NULL)
 	{
 		printf("Informe o diretorio e o nome do arquivo:\n>>");
